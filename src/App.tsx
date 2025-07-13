@@ -1,8 +1,8 @@
 import { Component, type ChangeEvent } from 'react';
-import { ErrorBoundary, ErrorFallback, Header } from './components';
+import { ErrorBoundary, ErrorFallback, Header, Main } from './components';
 import { pokeAPI } from './api/pokeAPI';
 
-type QueryResult = {
+export type QueryResult = {
   name: string;
   description: string;
 };
@@ -18,8 +18,17 @@ export class App extends Component<object, State> {
   state: State = { searchQuery: '', queryResults: [], loading: false };
 
   componentDidMount(): void {
-    const saved = localStorage.getItem('searchQuery') || '';
-    this.setState({ searchQuery: saved });
+    const savedPokemons = localStorage.getItem('foundPokemons') || '';
+    const parsedSavedPokemons = JSON.parse(savedPokemons);
+
+    const lastSavedPokemons = parsedSavedPokemons.length
+      ? parsedSavedPokemons[parsedSavedPokemons.length - 1].name
+      : '';
+
+    this.setState({
+      searchQuery: lastSavedPokemons,
+      queryResults: parsedSavedPokemons,
+    });
   }
 
   handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,22 +37,41 @@ export class App extends Component<object, State> {
 
   handleSearchClick = () => {
     const formattedSearchQuery = this.state.searchQuery.trim().toLowerCase();
-    localStorage.setItem('searchQuery', formattedSearchQuery);
     this.fetchResults(formattedSearchQuery);
   };
 
   async fetchResults(searchQuery: string) {
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: undefined });
 
     try {
       const queryResults = await pokeAPI(searchQuery);
-      console.log('queryResults:', queryResults);
-      this.setState({ queryResults, loading: false });
+
+      const localStorageData = localStorage.getItem('foundPokemons');
+      const parsedLocalStorageData = localStorageData
+        ? JSON.parse(localStorageData)
+        : [];
+
+      const foundPokemons = [
+        ...parsedLocalStorageData.filter(
+          (datum: QueryResult) =>
+            !queryResults.some((item: QueryResult) => item.name === datum.name)
+        ),
+        ...queryResults,
+      ];
+
+      this.setState({
+        queryResults: foundPokemons,
+        loading: false,
+        error: undefined,
+      });
+      localStorage.setItem('foundPokemons', JSON.stringify(foundPokemons));
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
+        this.setState({ error: error.message, loading: false });
       } else {
         console.error(String(error));
+        this.setState({ error: `${error}`, loading: false });
       }
     }
   }
@@ -51,11 +79,16 @@ export class App extends Component<object, State> {
   render() {
     return (
       <ErrorBoundary fallback={<ErrorFallback />}>
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center justify-start gap-6 flex-1 pt-20 pb-20 h-screen">
           <Header
             value={this.state.searchQuery}
             onChangeValue={this.handleChangeInputValue}
             onSearch={this.handleSearchClick}
+          />
+          <Main
+            loading={this.state.loading}
+            queryResults={this.state.queryResults}
+            error={this.state.error}
           />
         </div>
       </ErrorBoundary>
