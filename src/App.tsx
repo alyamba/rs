@@ -14,7 +14,7 @@ type State = {
   error?: string;
 };
 
-class App extends Component<object, State> {
+export class App extends Component<object, State> {
   state: State = { searchQuery: '', queryResults: [], loading: false };
 
   componentDidMount(): void {
@@ -62,5 +62,3 @@ class App extends Component<object, State> {
     );
   }
 }
-
-export default App;

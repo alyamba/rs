@@ -14,5 +14,3 @@ export class ErrorFallback extends Component {
     );
   }
 }
-
-export default ErrorFallback;

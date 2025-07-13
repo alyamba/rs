@@ -24,5 +24,3 @@ export class Header extends Component<Props, object> {
     );
   }
 }
-
-export default Header;
