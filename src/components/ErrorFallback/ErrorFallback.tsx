@@ -2,6 +2,10 @@ import { Component } from 'react';
 import errorCharacter from '../../assets/errorcharacter.png';
 
 export class ErrorFallback extends Component {
+  handleClick = () => {
+    window.location.reload();
+  };
+
   render() {
     return (
       <div className="flex flex-col items-center justify-center p-10 h-screen gap-4">
@@ -16,6 +20,12 @@ export class ErrorFallback extends Component {
             className="h-100 w-auto rounded-md"
           />
         </div>
+        <button
+          className="cursor-pointer p-2 bg-blue-950 text-white"
+          onClick={this.handleClick}
+        >
+          Reload
+        </button>
       </div>
     );
   }

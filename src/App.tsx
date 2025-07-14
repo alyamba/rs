@@ -1,5 +1,11 @@
 import { Component, type ChangeEvent } from 'react';
-import { ErrorBoundary, ErrorFallback, Header, Main } from './components';
+import {
+  ErrorBoundary,
+  ErrorButton,
+  ErrorFallback,
+  Header,
+  Main,
+} from './components';
 import { pokeAPI } from './api/pokeAPI';
 
 export type QueryResult = {
@@ -90,6 +96,9 @@ export class App extends Component<object, State> {
             queryResults={this.state.queryResults}
             error={this.state.error}
           />
+          <div className="flex justify-end w-100">
+            <ErrorButton />
+          </div>
         </div>
       </ErrorBoundary>
     );
