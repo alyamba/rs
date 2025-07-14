@@ -25,7 +25,7 @@ export class App extends Component<object, State> {
 
   componentDidMount(): void {
     const savedPokemons = localStorage.getItem('foundPokemons') || '';
-    const parsedSavedPokemons = JSON.parse(savedPokemons);
+    const parsedSavedPokemons = savedPokemons ? JSON.parse(savedPokemons) : [];
 
     const lastSavedPokemons = parsedSavedPokemons.length
       ? parsedSavedPokemons[parsedSavedPokemons.length - 1].name
