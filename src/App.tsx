@@ -22,6 +22,8 @@ export class App extends Component<object, State> {
   componentDidMount(): void {
     const searchQuery = localStorage.getItem('searchQuery') || '';
 
+    this.setState({ searchQuery });
+
     if (searchQuery) {
       this.fetchSearchData(searchQuery);
     } else {
