@@ -1,17 +1,43 @@
-type ResultsElement = {
-  name: string;
-  url: string;
+import type { PokeData } from './types';
+
+export const getAllPokeData = async (): Promise<PokeData[]> => {
+  const limit = 24;
+
+  const urls = Array.from({ length: limit }).map(
+    (_, id: number) => `https://pokeapi.co/api/v2/pokemon/${id + 1}`
+  );
+
+  const responses = await Promise.all(
+    urls.map(async (url) => {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return {
+        name: data.name,
+        data: {
+          height: data.height,
+          weight: data.weight,
+          types: data.types.map(
+            (type: { type: { name: string } }) => type.type.name
+          ),
+          isDefault: data.is_default,
+          imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}}.png`,
+        },
+        id: data.id,
+      };
+    })
+  );
+
+  return responses;
 };
 
-export async function pokeAPI(searchQuery: string) {
-  let url = '';
-
-  if (searchQuery === '') {
-    url = 'https://pokeapi.co/api/v2/pokemon?limit=5&offset=0';
-  } else {
-    const encodeSearchQuery = encodeURIComponent(searchQuery.toLowerCase());
-    url = `https://pokeapi.co/api/v2/pokemon/${encodeSearchQuery}`;
-  }
+export const getPokeData = async (searchQuery: string): Promise<PokeData[]> => {
+  const url = `https://pokeapi.co/api/v2/pokemon/${searchQuery}`;
 
   const response = await fetch(url);
 
@@ -21,17 +47,19 @@ export async function pokeAPI(searchQuery: string) {
 
   const data = await response.json();
 
-  if (Array.isArray(data.results)) {
-    return data.results.map((element: ResultsElement) => ({
-      name: element.name,
-      description: `Url: ${element.url}`,
-    }));
-  }
-
   return [
     {
       name: data.name,
-      description: `Url: ${data.species.url}`,
+      data: {
+        height: data.height,
+        weight: data.weight,
+        types: data.types.map(
+          (type: { type: { name: string } }) => type.type.name
+        ),
+        isDefault: data.is_default,
+        imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}}.png`,
+      },
+      id: data.id,
     },
   ];
-}
+};

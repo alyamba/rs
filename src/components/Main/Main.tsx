@@ -1,11 +1,11 @@
 import { Component } from 'react';
-import type { QueryResult } from '../../App';
 import { CardList } from '../CardList';
+import type { PokeData } from '../../api/types';
 
 type Props = {
   loading: boolean;
   error?: string;
-  queryResults: QueryResult[];
+  queryResults: PokeData[];
 };
 
 export class Main extends Component<Props> {
