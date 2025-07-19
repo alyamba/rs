@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import errorCharacter from '../../assets/errorcharacter.png';
+import chockedFace from '../../assets/shockedFace.svg';
 
 export class ErrorFallback extends Component {
   handleClick = () => {
@@ -8,23 +8,22 @@ export class ErrorFallback extends Component {
 
   render() {
     return (
-      <div className="flex flex-col items-center justify-center p-10 h-screen gap-4">
-        <p className="text-5xl font-semibold text-blue-950">
+      <div className="flex flex-col items-center justify-center p-10 h-screen w-screen gap-4 bg-yellow-200">
+        <p className="text-5xl font-semibold text-yellow-950">
           Oops! Something went wrong.
         </p>
-        <p className="text-2xl text-blue-950">Please, try again later.</p>
+
+        <p className="text-2xl text-yellow-950">Please, try again later.</p>
+
         <div className="h-100 ">
-          <img
-            src={errorCharacter}
-            alt="errorCharacter"
-            className="h-100 w-auto rounded-md"
-          />
+          <img src={chockedFace} alt="chockedFace" className="h-100 w-auto" />
         </div>
+
         <button
-          className="cursor-pointer p-2 bg-blue-950 text-white"
+          className="cursor-pointer py-4 px-8 bg-yellow-900 hover:bg-yellow-950 text-l font-semibold text-white rounded-xl shadow-lg"
           onClick={this.handleClick}
         >
-          Reload
+          RELOUD
         </button>
       </div>
     );

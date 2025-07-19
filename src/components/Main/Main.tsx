@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { CardList } from '../CardList';
 import type { PokeData } from '../../api/types';
+import { Loading } from '../Loading';
 
 type Props = {
   loading: boolean;
@@ -13,20 +14,15 @@ export class Main extends Component<Props> {
     const { loading, error, queryResults } = this.props;
 
     if (loading) {
-      return <div className="p-4 text-center text-blue-500">Loading...</div>;
+      return <Loading />;
     }
 
     if (error) {
       return <div className="p-4 text-center text-red-500">Error: {error}</div>;
     }
 
-    if (queryResults.length === 0) {
-      return (
-        <div className="p-4 text-center text-gray-500">No results found.</div>
-      );
-    }
     return (
-      <div>
+      <div className="pb-20">
         <CardList items={queryResults} />
       </div>
     );

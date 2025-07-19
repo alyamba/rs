@@ -96,22 +96,22 @@ export class App extends Component<object, State> {
   render() {
     return (
       <ErrorBoundary fallback={<ErrorFallback />}>
-        <div className="flex flex-col items-center justify-start gap-6 flex-1 pt-20 pb-20 h-screen">
+        <div className="flex flex-col items-center justify-start gap-8 p-20 h-screen w-full">
           <Header
             value={this.state.searchQuery}
             onChangeValue={this.handleChangeInputValue}
             onSearch={this.handleSearchClick}
           />
 
+          <div className="flex justify-end w-full">
+            <ErrorButton />
+          </div>
+
           <Main
             loading={this.state.loading}
             queryResults={this.state.queryResults}
             error={this.state.error}
           />
-
-          <div className="flex justify-end w-100">
-            <ErrorButton />
-          </div>
         </div>
       </ErrorBoundary>
     );

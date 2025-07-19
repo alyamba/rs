@@ -7,14 +7,15 @@ export class ErrorButton extends Component {
     if (this.state.shouldBeError) {
       throw new Error('Test error functionality');
     }
+
     return (
       <button
+        className="cursor-pointer py-4 px-8 bg-red-500 hover:bg-red-600 text-l font-semibold rounded-xl text-white shadow-lg animate-pulse"
         onClick={() => {
           this.setState({ shouldBeError: true });
         }}
-        className="cursor-pointer p-2 bg-red-200"
       >
-        Error
+        ⚠️ DO NOT CLICK
       </button>
     );
   }

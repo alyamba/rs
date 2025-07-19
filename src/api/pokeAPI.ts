@@ -22,11 +22,7 @@ export const getAllPokeData = async (): Promise<PokeData[]> => {
         data: {
           height: data.height,
           weight: data.weight,
-          types: data.types.map(
-            (type: { type: { name: string } }) => type.type.name
-          ),
-          isDefault: data.is_default,
-          imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}}.png`,
+          imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`,
         },
         id: data.id,
       };
@@ -53,11 +49,7 @@ export const getPokeData = async (searchQuery: string): Promise<PokeData[]> => {
       data: {
         height: data.height,
         weight: data.weight,
-        types: data.types.map(
-          (type: { type: { name: string } }) => type.type.name
-        ),
-        isDefault: data.is_default,
-        imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}}.png`,
+        imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`,
       },
       id: data.id,
     },

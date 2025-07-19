@@ -3,8 +3,6 @@ export type PokeData = {
   data: {
     height: number;
     weight: number;
-    types: string[];
-    isDefault: boolean;
     imgUrl: string;
   };
   id: number;
