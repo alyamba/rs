@@ -8,7 +8,8 @@ describe('Card', () => {
     data: {
       height: 7,
       weight: 69,
-      imgUrl: '',
+      imgUrl:
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
     },
     id: 1,
   };
