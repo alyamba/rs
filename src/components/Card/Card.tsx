@@ -29,6 +29,7 @@ export class Card extends Component<PokeData, State> {
               className={`h-full w-auto transition-opacity duration-300 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
+              data-testid="card-image"
               onLoad={this.handleImageLoad}
             />
           </div>
@@ -36,18 +37,24 @@ export class Card extends Component<PokeData, State> {
 
         <div className="bg-blue-100 p-4 flex flex-col gap-2 rounded-b-xl">
           <div className="flex flex-col justify-center items-center">
-            <p className="text-2xl font-semibold">{name.toUpperCase()}</p>
+            <p className="text-2xl font-semibold" data-testid="card-name">
+              {name.toUpperCase()}
+            </p>
           </div>
 
           <div className="flex justify-between gap-4 p-2 bg-blue-50 rounded-md">
             <div className="flex gap-1 items-center">
               <div className="text-l font-normal">HEIGHT: </div>
-              <div className="text-xl font-bold">{data.height / 10}M</div>
+              <div className="text-xl font-bold" data-testid="card-height">
+                {data.height / 10}M
+              </div>
             </div>
 
             <div className="flex gap-1 items-center">
               <div className="text-l font-normal">WEIGHT: </div>
-              <div className="text-xl font-bold">{data.weight / 10}KG</div>
+              <div className="text-xl font-bold" data-testid="card-weight">
+                {data.weight / 10}KG
+              </div>
             </div>
           </div>
         </div>
