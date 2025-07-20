@@ -11,6 +11,7 @@ export class ErrorButton extends Component {
     return (
       <button
         className="cursor-pointer py-4 px-8 bg-red-500 hover:bg-red-600 text-l font-semibold rounded-xl text-white shadow-lg animate-pulse"
+        data-testid="error-button"
         onClick={() => {
           this.setState({ shouldBeError: true });
         }}
