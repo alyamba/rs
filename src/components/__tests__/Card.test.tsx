@@ -47,7 +47,7 @@ describe('Card', () => {
 
     expect(image).toHaveClass('opacity-100');
 
-    const loading = component.queryByText(/loading/i);
+    const loading = component.queryByTestId('loading');
     expect(loading).not.toBeInTheDocument();
   });
 });
