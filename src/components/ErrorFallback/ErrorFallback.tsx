@@ -8,7 +8,10 @@ export class ErrorFallback extends Component {
 
   render() {
     return (
-      <div className="flex flex-col items-center justify-center p-10 h-screen w-screen gap-4 bg-yellow-200">
+      <div
+        className="flex flex-col items-center justify-center p-10 h-screen w-screen gap-4 bg-yellow-200"
+        data-testid="error-fallback-container"
+      >
         <p className="text-5xl font-semibold text-yellow-950">
           Oops! Something went wrong.
         </p>
@@ -21,6 +24,7 @@ export class ErrorFallback extends Component {
 
         <button
           className="cursor-pointer py-4 px-8 bg-yellow-900 hover:bg-yellow-950 text-l font-semibold text-white rounded-xl shadow-lg"
+          data-testid="reload-button"
           onClick={this.handleClick}
         >
           RELOUD
