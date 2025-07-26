@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 
-export type Props = {
+export type HeaderProps = {
   value: string;
   onChangeValue: (e: ChangeEvent<HTMLInputElement>) => void;
   onSearch: () => void;

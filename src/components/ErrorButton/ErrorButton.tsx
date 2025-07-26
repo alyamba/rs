@@ -1,23 +1,21 @@
-import { Component } from 'react';
+import { useState, type FC } from 'react';
 
-export class ErrorButton extends Component {
-  state = { shouldBeError: false };
+export const ErrorButton: FC = () => {
+  const [shouldBeError, setShouldBeError] = useState<boolean>(false);
 
-  render() {
-    if (this.state.shouldBeError) {
-      throw new Error('Test error functionality');
-    }
-
-    return (
-      <button
-        className="cursor-pointer py-4 px-8 bg-red-500 hover:bg-red-600 text-l font-semibold rounded-xl text-white shadow-lg animate-pulse"
-        data-testid="error-button"
-        onClick={() => {
-          this.setState({ shouldBeError: true });
-        }}
-      >
-        ⚠️ DO NOT CLICK
-      </button>
-    );
+  if (shouldBeError) {
+    throw new Error('Test error functionality');
   }
-}
+
+  return (
+    <button
+      className="cursor-pointer py-4 px-8 bg-red-500 hover:bg-red-600 text-l font-semibold rounded-xl text-white shadow-lg animate-pulse"
+      data-testid="error-button"
+      onClick={() => {
+        setShouldBeError(true);
+      }}
+    >
+      ⚠️ DO NOT CLICK
+    </button>
+  );
+};

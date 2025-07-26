@@ -1,4 +1,10 @@
-import { Component, type ChangeEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FC,
+} from 'react';
 import {
   ErrorBoundary,
   ErrorButton,
@@ -9,111 +15,94 @@ import {
 import { getAllPokeData, getPokeData } from './api/pokeAPI';
 import type { PokeData } from './api/types';
 
-type State = {
-  searchQuery: string;
-  queryResults: PokeData[];
-  loading: boolean;
-  error?: string;
-};
+export const App: FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [queryResults, setQueryResults] = useState<PokeData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
 
-export class App extends Component<object, State> {
-  state: State = { searchQuery: '', queryResults: [], loading: false };
-
-  componentDidMount(): void {
-    const searchQuery = localStorage.getItem('searchQuery') || '';
-
-    this.setState({ searchQuery });
-
-    if (searchQuery) {
-      this.fetchSearchData(searchQuery);
-    } else {
-      this.fetchAllData();
-    }
-  }
-
-  handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchQuery: e.target.value });
-  };
-
-  handleSearchClick = () => {
-    const formattedSearchQuery = this.state.searchQuery.trim().toLowerCase();
-
-    if (formattedSearchQuery) {
-      this.fetchSearchData(formattedSearchQuery);
-    } else {
-      this.fetchAllData();
-    }
-  };
-
-  async fetchAllData() {
-    this.setState({ loading: true, error: undefined });
+  const fetchAllData = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
 
     try {
-      const queryResults = await getAllPokeData();
-
-      this.setState({
-        queryResults,
-        loading: false,
-        error: undefined,
-      });
-
+      const results = await getAllPokeData();
+      setQueryResults(results);
       localStorage.setItem('searchQuery', '');
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-        this.setState({ error: error.message, loading: false });
+        setError(error.message);
       } else {
         console.error(String(error));
-        this.setState({ error: `${error}`, loading: false });
+        setError(`${error}`);
       }
+    } finally {
+      setLoading(false);
     }
-  }
+  }, []);
 
-  async fetchSearchData(searchQuery: string) {
-    this.setState({ loading: true, error: undefined });
+  const fetchSearchData = useCallback(async (searchQuery: string) => {
+    setLoading(true);
+    setError(undefined);
 
     try {
-      const queryResults = await getPokeData(searchQuery);
-
-      this.setState({
-        queryResults,
-        loading: false,
-        error: undefined,
-      });
-
+      const results = await getPokeData(searchQuery);
+      setQueryResults(results);
       localStorage.setItem('searchQuery', searchQuery);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-        this.setState({ error: error.message, loading: false });
+        setError(error.message);
       } else {
         console.error(String(error));
-        this.setState({ error: `${error}`, loading: false });
+        setError(`${error}`);
       }
+    } finally {
+      setLoading(false);
     }
-  }
+  }, []);
 
-  render() {
-    return (
-      <ErrorBoundary fallback={<ErrorFallback />}>
-        <div className="flex flex-col items-center justify-start gap-8 p-20 h-screen w-full">
-          <Header
-            value={this.state.searchQuery}
-            onChangeValue={this.handleChangeInputValue}
-            onSearch={this.handleSearchClick}
-          />
+  useEffect(() => {
+    const storedQuery = localStorage.getItem('searchQuery') || '';
+    setSearchQuery(storedQuery);
 
-          <div className="flex justify-end w-full">
-            <ErrorButton />
-          </div>
+    if (storedQuery) {
+      fetchSearchData(storedQuery);
+    } else {
+      fetchAllData();
+    }
+  }, [fetchAllData, fetchSearchData]);
 
-          <Main
-            loading={this.state.loading}
-            queryResults={this.state.queryResults}
-            error={this.state.error}
-          />
+  const handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchClick = useCallback(() => {
+    const formattedSearchQuery = searchQuery.trim().toLowerCase();
+
+    if (formattedSearchQuery) {
+      fetchSearchData(formattedSearchQuery);
+    } else {
+      fetchAllData();
+    }
+  }, [fetchAllData, fetchSearchData, searchQuery]);
+
+  return (
+    <ErrorBoundary fallback={<ErrorFallback />}>
+      <div className="flex flex-col items-center justify-start gap-8 p-20 h-screen w-full">
+        <Header
+          value={searchQuery}
+          onChangeValue={handleChangeInputValue}
+          onSearch={handleSearchClick}
+        />
+
+        <div className="flex justify-end w-full">
+          <ErrorButton />
         </div>
-      </ErrorBoundary>
-    );
-  }
-}
+
+        <Main loading={loading} queryResults={queryResults} error={error} />
+      </div>
+    </ErrorBoundary>
+  );
+};
