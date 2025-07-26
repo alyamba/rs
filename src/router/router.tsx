@@ -1,6 +1,7 @@
 import { App } from '../App';
-import { ErrorPage } from '../pages';
+import { AboutPage, ErrorPage } from '../pages';
 
-const router = [{ path: '/', element: <App />, errorElement: <ErrorPage /> }];
-
-export default router;
+export const router = [
+  { path: '/', element: <App />, errorElement: <ErrorPage /> },
+  { path: '/about', element: <AboutPage /> },
+];
