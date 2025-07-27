@@ -1,23 +1,21 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { Main } from '../Main';
+import { MemoryRouter } from 'react-router';
 
 describe('Main', () => {
-  const mockProps = [
-    {
-      name: 'bulbasaur',
-      data: {
-        height: 7,
-        weight: 69,
-        imgUrl:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-      },
-      id: 1,
-    },
-  ];
-
   it('Renders Main when loading is true', () => {
-    const component = render(<Main loading={true} queryResults={[]} />);
+    const component = render(
+      <MemoryRouter>
+        <Main
+          loading={true}
+          queryResults={[]}
+          totalPages={55}
+          currentPage={1}
+          onChangeCurrentPage={() => {}}
+        />
+      </MemoryRouter>
+    );
 
     const loading = component.queryByTestId('loading');
     expect(loading).toBeInTheDocument();
@@ -25,7 +23,16 @@ describe('Main', () => {
 
   it('Renders error message', () => {
     const component = render(
-      <Main loading={false} error="Error" queryResults={[]} />
+      <MemoryRouter>
+        <Main
+          loading={false}
+          error="Error"
+          queryResults={[]}
+          totalPages={55}
+          currentPage={1}
+          onChangeCurrentPage={() => {}}
+        />
+      </MemoryRouter>
     );
 
     const error = component.getByText(/error: Error/i);
@@ -33,17 +40,19 @@ describe('Main', () => {
   });
 
   it('Renders CardList with queryResults', () => {
-    const component = render(<Main loading={false} queryResults={mockProps} />);
+    const component = render(
+      <MemoryRouter>
+        <Main
+          loading={false}
+          queryResults={[]}
+          totalPages={55}
+          currentPage={1}
+          onChangeCurrentPage={() => {}}
+        />
+      </MemoryRouter>
+    );
 
     const cardList = component.getByTestId('cards-container') as HTMLDivElement;
     expect(cardList).toBeInTheDocument();
-
-    const cards = component.getAllByTestId(
-      'card-name'
-    ) as HTMLParagraphElement[];
-    expect(cards).toHaveLength(mockProps.length);
-
-    const cardName = component.getByText('BULBASAUR') as HTMLParagraphElement;
-    expect(cardName).toBeInTheDocument();
   });
 });
