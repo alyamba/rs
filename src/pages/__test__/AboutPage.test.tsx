@@ -1,8 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, it } from 'vitest';
-import { AboutPage } from '../';
-import { App } from '../../App';
+import { AboutPage, HomePage } from '../';
 
 describe('AboutPage', () => {
   it('Renders About correctly', () => {
@@ -27,7 +26,7 @@ describe('AboutPage', () => {
       <MemoryRouter initialEntries={['/about']}>
         <Routes>
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </MemoryRouter>
     );

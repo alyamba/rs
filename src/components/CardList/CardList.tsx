@@ -6,7 +6,7 @@ import type { CardListProps } from './types';
 export const CardList: FC<CardListProps> = ({ items }) => {
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12"
+      className="flex flex-wrap justify-center gap-12"
       data-testid="cards-container"
     >
       {items.map((item: PokeData) => (
