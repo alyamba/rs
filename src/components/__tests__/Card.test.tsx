@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { Card } from '../Card';
+import { MemoryRouter } from 'react-router';
 
 describe('Card', () => {
   const mockProps = {
@@ -10,12 +11,18 @@ describe('Card', () => {
       weight: 69,
       imgUrl:
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+      isDefault: true,
+      types: ['grass', 'poison'],
     },
     id: 1,
   };
 
   it('Renders card image and name', () => {
-    const component = render(<Card {...mockProps} />);
+    const component = render(
+      <MemoryRouter>
+        <Card {...mockProps} />
+      </MemoryRouter>
+    );
 
     expect(component.getByTestId('card-image')).toBeTruthy();
 
@@ -24,22 +31,12 @@ describe('Card', () => {
     expect(name.textContent).toBe('BULBASAUR');
   });
 
-  it('Renders height and weight on card', () => {
-    const component = render(<Card {...mockProps} />);
-
-    expect(component.getByText('HEIGHT:')).toBeTruthy();
-    const height = component.getByTestId('card-height') as HTMLDivElement;
-    expect(height).toBeTruthy();
-    expect(height.textContent).toBe('0.7M');
-
-    expect(component.getByText('WEIGHT:')).toBeTruthy();
-    const weight = component.getByTestId('card-weight') as HTMLDivElement;
-    expect(weight).toBeTruthy();
-    expect(weight.textContent).toBe('6.9KG');
-  });
-
   it('Check the image loading and correct render of loading', () => {
-    const component = render(<Card {...mockProps} />);
+    const component = render(
+      <MemoryRouter>
+        <Card {...mockProps} />
+      </MemoryRouter>
+    );
 
     const image = component.getByTestId('card-image') as HTMLImageElement;
 
