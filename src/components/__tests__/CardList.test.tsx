@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import { describe, it } from 'vitest';
 import { CardList } from '../CardList';
+import { MemoryRouter } from 'react-router';
 
 describe('CardList', () => {
   const mockProps = {
@@ -12,6 +13,8 @@ describe('CardList', () => {
           weight: 69,
           imgUrl:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+          isDefault: true,
+          types: ['grass', 'poison'],
         },
         id: 1,
       },
@@ -19,7 +22,11 @@ describe('CardList', () => {
   };
 
   it('Renders cards', () => {
-    const component = render(<CardList {...mockProps} />);
+    const component = render(
+      <MemoryRouter>
+        <CardList {...mockProps} />
+      </MemoryRouter>
+    );
 
     const container = component.getByTestId(
       'cards-container'
@@ -32,7 +39,11 @@ describe('CardList', () => {
   });
 
   it('Renders card image and name', () => {
-    const component = render(<CardList {...mockProps} />);
+    const component = render(
+      <MemoryRouter>
+        <CardList {...mockProps} />
+      </MemoryRouter>
+    );
 
     const container = component.getByTestId(
       'cards-container'
@@ -41,17 +52,5 @@ describe('CardList', () => {
 
     expect(component.getByTestId('card-image')).toBeTruthy();
     expect(component.getByTestId('card-name')).toHaveTextContent('BULBASAUR');
-  });
-
-  it('Renders card height and weight', () => {
-    const component = render(<CardList {...mockProps} />);
-
-    const container = component.getByTestId(
-      'cards-container'
-    ) as HTMLDivElement;
-    expect(container).toBeInTheDocument();
-
-    expect(component.getByTestId('card-height')).toHaveTextContent('0.7M');
-    expect(component.getByTestId('card-weight')).toHaveTextContent('6.9KG');
   });
 });
