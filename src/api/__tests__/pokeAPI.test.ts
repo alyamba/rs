@@ -6,6 +6,8 @@ const mockResponseData = {
   height: 7,
   weight: 69,
   id: 1,
+  is_default: true,
+  types: [{ type: { name: 'grass' } }, { type: { name: 'poison' } }],
 };
 
 const mockFormattedResponseData = {
@@ -15,8 +17,18 @@ const mockFormattedResponseData = {
     weight: 69,
     imgUrl:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+    isDefault: true,
+    types: ['grass', 'poison'],
   },
   id: 1,
+};
+
+const mockPokemonList = {
+  count: 100,
+  results: Array.from({ length: 24 }, (_, index) => ({
+    name: `pokemon${index + 1}`,
+    url: `https://pokeapi.co/api/v2/pokemon/${index + 1}`,
+  })),
 };
 
 describe('PokeAPI getAllPokeData', () => {
@@ -25,19 +37,30 @@ describe('PokeAPI getAllPokeData', () => {
   });
 
   it('GetAllPokeData fetches 24 pokemons success', async () => {
+    const mockResolvedList = {
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve(mockPokemonList),
+    };
     const mockResolvedValue = {
       ok: true,
       status: 200,
       json: () => Promise.resolve(mockResponseData),
     };
 
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResolvedValue));
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(mockResolvedList)
+        .mockResolvedValue(mockResolvedValue)
+    );
 
-    const result = await getAllPokeData();
+    const result = await getAllPokeData(1);
 
-    expect(fetch).toHaveBeenCalledTimes(24);
-    expect(result).toHaveLength(24);
-    expect(result[0]).toEqual(mockFormattedResponseData);
+    expect(fetch).toHaveBeenCalledTimes(1 + 24);
+    expect(result.data).toHaveLength(24);
+    expect(result.data[0].name).toBe('bulbasaur');
   });
 
   it('GetAllPokeData fetches 24 pokemons fails', async () => {
@@ -58,7 +81,7 @@ describe('PokeAPI getAllPokeData', () => {
 
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(getAllPokeData()).rejects.toThrow(
+    await expect(getAllPokeData(1)).rejects.toThrow(
       'Request failed with status 500'
     );
 
@@ -85,7 +108,7 @@ describe('PokeAPI getPokeData', () => {
     expect(fetch).toHaveBeenCalledWith(
       'https://pokeapi.co/api/v2/pokemon/bulbasaur'
     );
-    expect(result).toEqual([mockFormattedResponseData]);
+    expect(result.data).toEqual([mockFormattedResponseData]);
   });
 
   it('GetPokeData fetches pokemon fails', async () => {

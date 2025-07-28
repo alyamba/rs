@@ -1,38 +1,36 @@
-import type { PokeData } from './types';
+import type { PokeApiResponse, PokemonResponse } from './types';
 
-export const getAllPokeData = async (): Promise<PokeData[]> => {
-  const limit = 24;
+const REQUEST_LIMIT = 24;
 
-  const urls = Array.from({ length: limit }).map(
-    (_, id: number) => `https://pokeapi.co/api/v2/pokemon/${id + 1}`
+export const getAllPokeData = async (
+  page: number
+): Promise<PokeApiResponse> => {
+  const response = await fetch(
+    `https://pokeapi.co/api/v2/pokemon?limit=${REQUEST_LIMIT}&offset=${(page - 1) * REQUEST_LIMIT}`
   );
 
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+  const pokemonResponse = await response.json();
+
+  const totalPages = Math.ceil(pokemonResponse.count / REQUEST_LIMIT);
+  const pokemons: PokemonResponse[] = pokemonResponse.results;
+
   const responses = await Promise.all(
-    urls.map(async (url) => {
-      const response = await fetch(url);
+    pokemons.map(async (pokemon) => {
+      const response = await getPokeData(pokemon.name);
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return {
-        name: data.name,
-        data: {
-          height: data.height,
-          weight: data.weight,
-          imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`,
-        },
-        id: data.id,
-      };
+      return response.data[0];
     })
   );
 
-  return responses;
+  return { totalPages, data: responses };
 };
 
-export const getPokeData = async (searchQuery: string): Promise<PokeData[]> => {
+export const getPokeData = async (
+  searchQuery: string
+): Promise<PokeApiResponse> => {
   const url = `https://pokeapi.co/api/v2/pokemon/${searchQuery}`;
 
   const response = await fetch(url);
@@ -43,15 +41,22 @@ export const getPokeData = async (searchQuery: string): Promise<PokeData[]> => {
 
   const data = await response.json();
 
-  return [
-    {
-      name: data.name,
-      data: {
-        height: data.height,
-        weight: data.weight,
-        imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`,
+  return {
+    totalPages: 1,
+    data: [
+      {
+        name: data.name,
+        data: {
+          height: data.height,
+          weight: data.weight,
+          imgUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`,
+          isDefault: data.is_default,
+          types: data.types.map(
+            (type: { type: { name: string } }) => type.type.name
+          ),
+        },
+        id: data.id,
       },
-      id: data.id,
-    },
-  ];
+    ],
+  };
 };
