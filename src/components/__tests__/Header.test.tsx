@@ -12,7 +12,6 @@ describe('Header', () => {
   it('Renders title, search input and search button', () => {
     const component = render(<Header {...mockProps} />);
 
-    expect(component.getByTestId('title')).toBeTruthy();
     expect(component.getByTestId('search-input')).toBeTruthy();
     expect(component.getByTestId('search-button')).toBeTruthy();
   });

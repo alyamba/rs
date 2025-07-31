@@ -2,13 +2,23 @@ import { fireEvent, render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, it } from 'vitest';
 import { AboutPage, HomePage } from '../';
+import type { ReactNode } from 'react';
+import { ThemeContext } from '../../utils/hooks/useTheme/useTheme';
+
+const MockThemeProvider = ({ children }: { children: ReactNode }) => (
+  <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: vi.fn() }}>
+    {children}
+  </ThemeContext.Provider>
+);
 
 describe('AboutPage', () => {
   it('Renders About correctly', () => {
     const page = render(
-      <MemoryRouter>
-        <AboutPage />
-      </MemoryRouter>
+      <MockThemeProvider>
+        <MemoryRouter>
+          <AboutPage />
+        </MemoryRouter>
+      </MockThemeProvider>
     );
 
     const courseLink = page.getByText('RSschool React course');
@@ -21,14 +31,16 @@ describe('AboutPage', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('Navigate to HomePage from AboutPage when HOME button was clicked', () => {
+  it('Navigate to HomePage from AboutPage when HOME button was clicked', async () => {
     const page = render(
-      <MemoryRouter initialEntries={['/about']}>
-        <Routes>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/" element={<HomePage />} />
-        </Routes>
-      </MemoryRouter>
+      <MockThemeProvider>
+        <MemoryRouter initialEntries={['/about']}>
+          <Routes>
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </MemoryRouter>
+      </MockThemeProvider>
     );
 
     const title = page.getByText('ABOUT US');
@@ -37,15 +49,17 @@ describe('AboutPage', () => {
     const homeLink = page.getByRole('link', { name: /home/i });
     fireEvent.click(homeLink);
 
-    const homeTitleText = page.getByText('API');
-    expect(homeTitleText).toBeInTheDocument();
+    const mainContainer = page.getByTestId('main-container');
+    expect(mainContainer).toBeInTheDocument();
   });
 
   it('Renders external links correctly', () => {
     const page = render(
-      <MemoryRouter>
-        <AboutPage />
-      </MemoryRouter>
+      <MockThemeProvider>
+        <MemoryRouter>
+          <AboutPage />
+        </MemoryRouter>
+      </MockThemeProvider>
     );
 
     const courseLink = page.getByText('RSschool React course');
