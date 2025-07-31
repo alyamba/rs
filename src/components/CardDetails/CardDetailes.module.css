@@ -1,0 +1,7 @@
+[data-theme='light'] .cardDetailsContainer {
+  background-color: #dbeaff;
+}
+
+[data-theme='dark'] .cardDetailsContainer {
+  background-color: #294259;
+}
