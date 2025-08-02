@@ -57,7 +57,7 @@ export const Flyout: FC = () => {
 
         <a
           className="p-2 border rounded cursor-pointer border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-          download={'pokemons.csv'}
+          download={`${pokemons.length}-pokemons.csv`}
           data-testid="download-button"
           href={URL.createObjectURL(file)}
         >
