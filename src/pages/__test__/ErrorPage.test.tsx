@@ -1,25 +1,12 @@
-import { fireEvent, render } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { fireEvent } from '@testing-library/react';
+import { Route, Routes } from 'react-router';
 import { describe } from 'vitest';
 import { ErrorPage, HomePage } from '../';
-import type { ReactNode } from 'react';
-import { ThemeContext } from '../../utils/hooks/useTheme/useTheme';
-
-const MockThemeProvider = ({ children }: { children: ReactNode }) => (
-  <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: vi.fn() }}>
-    {children}
-  </ThemeContext.Provider>
-);
+import { renderWithStore } from '../../utils';
 
 describe('ErrorPage', () => {
   it('Renders ErrorPage correctly', () => {
-    const page = render(
-      <MockThemeProvider>
-        <MemoryRouter>
-          <ErrorPage />
-        </MemoryRouter>
-      </MockThemeProvider>
-    );
+    const page = renderWithStore(<ErrorPage />);
 
     const errorNumber = page.getByText('404');
     expect(errorNumber).toBeInTheDocument();
@@ -32,15 +19,12 @@ describe('ErrorPage', () => {
   });
 
   it('Navigate to HomePage from ErrorPage when HOME button was clicked', () => {
-    const page = render(
-      <MockThemeProvider>
-        <MemoryRouter initialEntries={['/error']}>
-          <Routes>
-            <Route path="/error" element={<ErrorPage />} />
-            <Route path="/" element={<HomePage />} />
-          </Routes>
-        </MemoryRouter>
-      </MockThemeProvider>
+    const page = renderWithStore(
+      <Routes>
+        <Route path="/error" element={<ErrorPage />} />
+        <Route path="/" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/error'] }
     );
 
     const errorNumber = page.getByText('404');
