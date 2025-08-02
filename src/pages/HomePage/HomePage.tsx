@@ -10,6 +10,7 @@ import {
   ErrorBoundary,
   ErrorButton,
   ErrorFallback,
+  Flyout,
   Header,
   Main,
   NavBar,
@@ -31,6 +32,7 @@ export const HomePage: FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [selectedPokemons, setSelectedPokemons] = useState<PokeData[]>([]);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);
@@ -142,8 +144,16 @@ export const HomePage: FC = () => {
           error={error}
           currentPage={currentPage}
           onChangeCurrentPage={handleChangeCurrentPage}
+          selectedPokemons={selectedPokemons}
+          setSelectedPokemons={setSelectedPokemons}
         />
       </div>
+      {selectedPokemons.length ? (
+        <Flyout
+          selectedPokemons={selectedPokemons}
+          setSelectedPokemons={setSelectedPokemons}
+        />
+      ) : null}
     </ErrorBoundary>
   );
 };
