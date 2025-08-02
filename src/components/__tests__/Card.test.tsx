@@ -5,16 +5,20 @@ import { MemoryRouter } from 'react-router';
 
 describe('Card', () => {
   const mockProps = {
-    name: 'bulbasaur',
-    data: {
-      height: 7,
-      weight: 69,
-      imgUrl:
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-      isDefault: true,
-      types: ['grass', 'poison'],
+    item: {
+      name: 'bulbasaur',
+      data: {
+        height: 7,
+        weight: 69,
+        imgUrl:
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+        isDefault: true,
+        types: ['grass', 'poison'],
+      },
+      id: 1,
     },
-    id: 1,
+    selectedPokemons: [],
+    setSelectedPokemons: () => {},
   };
 
   it('Renders card image and name', () => {

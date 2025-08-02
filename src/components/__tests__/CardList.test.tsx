@@ -19,6 +19,8 @@ describe('CardList', () => {
         id: 1,
       },
     ],
+    selectedPokemons: [],
+    setSelectedPokemons: () => {},
   };
 
   it('Renders cards', () => {
