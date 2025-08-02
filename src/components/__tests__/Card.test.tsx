@@ -1,32 +1,11 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { mockPokemonData, renderWithStore } from '../../utils';
 import { Card } from '../Card';
-import { MemoryRouter } from 'react-router';
 
 describe('Card', () => {
-  const mockProps = {
-    item: {
-      name: 'bulbasaur',
-      data: {
-        height: 7,
-        weight: 69,
-        imgUrl:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-        isDefault: true,
-        types: ['grass', 'poison'],
-      },
-      id: 1,
-    },
-    selectedPokemons: [],
-    setSelectedPokemons: () => {},
-  };
-
   it('Renders card image and name', () => {
-    const component = render(
-      <MemoryRouter>
-        <Card {...mockProps} />
-      </MemoryRouter>
-    );
+    const component = renderWithStore(<Card pokemonData={mockPokemonData} />);
 
     expect(component.getByTestId('card-image')).toBeTruthy();
 
@@ -36,11 +15,7 @@ describe('Card', () => {
   });
 
   it('Check the image loading and correct render of loading', () => {
-    const component = render(
-      <MemoryRouter>
-        <Card {...mockProps} />
-      </MemoryRouter>
-    );
+    const component = renderWithStore(<Card pokemonData={mockPokemonData} />);
 
     const image = component.getByTestId('card-image') as HTMLImageElement;
 
