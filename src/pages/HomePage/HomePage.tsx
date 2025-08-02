@@ -18,9 +18,13 @@ import {
 import { getAllPokeData, getPokeData } from '../../api/pokeAPI';
 import type { PokeData } from '../../api/types';
 import { useStoredItem } from '../../utils';
+import { useSelector } from 'react-redux';
+import { selectPokemons } from '../../store';
 
 export const HomePage: FC = () => {
   const navigate = useNavigate();
+
+  const pokemons = useSelector(selectPokemons);
 
   const [searchQuery, setSearchQuery] = useStoredItem<string>(
     'searchQuery',
@@ -32,7 +36,6 @@ export const HomePage: FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [selectedPokemons, setSelectedPokemons] = useState<PokeData[]>([]);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);
@@ -144,16 +147,9 @@ export const HomePage: FC = () => {
           error={error}
           currentPage={currentPage}
           onChangeCurrentPage={handleChangeCurrentPage}
-          selectedPokemons={selectedPokemons}
-          setSelectedPokemons={setSelectedPokemons}
         />
       </div>
-      {selectedPokemons.length ? (
-        <Flyout
-          selectedPokemons={selectedPokemons}
-          setSelectedPokemons={setSelectedPokemons}
-        />
-      ) : null}
+      {pokemons.length ? <Flyout /> : null}
     </ErrorBoundary>
   );
 };

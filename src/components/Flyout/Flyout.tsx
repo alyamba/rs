@@ -1,15 +1,15 @@
 import type { FC } from 'react';
-import type { FlyoutProps } from './types';
 import styles from './Flyout.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeAllPokemons, selectPokemons } from '../../store';
 
-export const Flyout: FC<FlyoutProps> = ({
-  selectedPokemons,
-  setSelectedPokemons,
-}) => {
+export const Flyout: FC = () => {
+  const pokemons = useSelector(selectPokemons);
+  const dispatch = useDispatch();
+
   const handleClickUnselectAll = () => {
-    setSelectedPokemons([]);
+    dispatch(removeAllPokemons());
   };
-  const handleClickDownload = () => {};
 
   const downloadInfo = [
     [
@@ -21,7 +21,7 @@ export const Flyout: FC<FlyoutProps> = ({
       'Default pokemon',
       'Types',
     ],
-    ...selectedPokemons.map((pokemon) => [
+    ...pokemons.map((pokemon) => [
       pokemon.id,
       pokemon.name,
       pokemon.data.height / 10,
@@ -40,8 +40,8 @@ export const Flyout: FC<FlyoutProps> = ({
       className={`${styles.flyout} fixed z-2 w-full bottom-0 flex justify-between py-4 px-20 items-center gap-10 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]`}
     >
       <div className="text-lg">
-        {selectedPokemons.length}{' '}
-        {selectedPokemons.length === 1
+        {pokemons.length}{' '}
+        {pokemons.length === 1
           ? 'pokemon is selected'
           : 'pokemons are selected'}
       </div>
@@ -56,7 +56,6 @@ export const Flyout: FC<FlyoutProps> = ({
 
         <a
           className="p-2 border rounded cursor-pointer border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-          onClick={handleClickDownload}
           download={'pokemons.csv'}
           href={URL.createObjectURL(file)}
         >

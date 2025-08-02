@@ -1,7 +1,5 @@
 import type { PokeData } from '../../api/types';
 
 export type CardListProps = {
-  items: PokeData[];
-  selectedPokemons: PokeData[];
-  setSelectedPokemons: React.Dispatch<React.SetStateAction<PokeData[]>>;
+  pokemons: PokeData[];
 };

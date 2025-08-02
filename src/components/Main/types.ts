@@ -7,6 +7,4 @@ export type MainProps = {
   totalPages: number;
   currentPage: number;
   onChangeCurrentPage: (value: number) => void;
-  selectedPokemons: PokeData[];
-  setSelectedPokemons: React.Dispatch<React.SetStateAction<PokeData[]>>;
 };

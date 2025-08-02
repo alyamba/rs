@@ -2,13 +2,13 @@ import { useState, type ChangeEvent, type FC } from 'react';
 import { Loading } from '../Loading';
 import { useNavigate, useSearchParams } from 'react-router';
 import type { CardProps } from './types';
-import type { PokeData } from '../../api/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPokemon, removePokemon, selectPokemons } from '../../store';
 
-export const Card: FC<CardProps> = ({
-  item,
-  selectedPokemons,
-  setSelectedPokemons,
-}) => {
+export const Card: FC<CardProps> = ({ pokemonData }) => {
+  const pokemons = useSelector(selectPokemons);
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -20,16 +20,14 @@ export const Card: FC<CardProps> = ({
 
   const handleCardClick = () => {
     const currentPage = searchParams.get('page') || 1;
-    navigate(`pokemon/${item.id}/?page=${currentPage}`);
+    navigate(`pokemon/${pokemonData.id}/?page=${currentPage}`);
   };
 
   const handleClickCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedPokemons((prev: PokeData[]) => [...prev, item]);
+      dispatch(addPokemon(pokemonData));
     } else {
-      setSelectedPokemons((prev: PokeData[]) =>
-        prev.filter((el) => el.id !== item.id)
-      );
+      dispatch(removePokemon(pokemonData));
     }
   };
 
@@ -39,7 +37,7 @@ export const Card: FC<CardProps> = ({
         <input
           type="checkbox"
           onChange={handleClickCheckbox}
-          checked={selectedPokemons.map((el) => el.id).includes(item.id)}
+          checked={pokemons.map((el) => el.id).includes(pokemonData.id)}
         />
       </div>
 
@@ -52,8 +50,8 @@ export const Card: FC<CardProps> = ({
 
           <div className="h-full flex items-center justify-center">
             <img
-              src={item.data.imgUrl}
-              alt={item.name}
+              src={pokemonData.data.imgUrl}
+              alt={pokemonData.name}
               className={`h-full transition-opacity duration-300 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
@@ -66,7 +64,7 @@ export const Card: FC<CardProps> = ({
         <div className="bg-blue-100 p-4 rounded-b-xl w-[250px] flex-1 justify-between">
           <div className="flex flex-col justify-center items-center bg-blue-100 p-4">
             <p className="text-2xl font-semibold" data-testid="card-name">
-              {item.name.toUpperCase()}
+              {pokemonData.name.toUpperCase()}
             </p>
           </div>
         </div>
