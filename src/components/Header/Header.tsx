@@ -1,19 +1,9 @@
 import { type FC } from 'react';
 import type { HeaderProps } from './types';
-import pokemonLogo from '../../assets/pokemonLogo.svg';
 
 export const Header: FC<HeaderProps> = ({ value, onChangeValue, onSearch }) => {
   return (
     <div className="flex flex-col items-center gap-4 w-full">
-      <div
-        data-testid="title"
-        className="flex flex-row justify-center items-center gap-2 text-4xl font-bold w-full"
-      >
-        <p className="inline-block">Hello, It is</p>
-        <img src={pokemonLogo} alt="Pokemon" className="h-12" />
-        <p>API</p>
-      </div>
-
       <div className="flex gap-4 w-full">
         <input
           name="search"

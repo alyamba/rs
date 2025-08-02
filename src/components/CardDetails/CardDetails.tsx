@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { getPokeData } from '../../api/pokeAPI';
 import type { PokeData } from '../../api/types';
 import { Loading } from '../Loading';
+import styles from './CardDetailes.module.css';
 
 export const CardDetails: FC = () => {
   const navigate = useNavigate();
@@ -47,10 +48,13 @@ export const CardDetails: FC = () => {
   };
 
   return (
-    <div className="sticky top-12 w-[300px] min-h-[300px] bg-blue-100">
+    <div
+      className={`${styles.cardDetailsContainer} sticky top-12 w-[300px] min-h-[300px]`}
+    >
       <button
         className="hover:cursor-pointer text-3xl mx-4 my-2"
         onClick={handleClickClose}
+        data-testid="close-details-icon"
       >
         ×
       </button>

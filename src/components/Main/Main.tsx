@@ -28,13 +28,14 @@ export const Main: FC<MainProps> = ({
   return (
     <div className="flex gap-8 justify-between w-full">
       <div className="pb-20 flex flex-col gap-12 w-full">
-        <CardList items={queryResults} />
+        <CardList pokemons={queryResults} />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onChangePage={handleChangePage}
         />
       </div>
+
       <div>
         <Outlet />
       </div>

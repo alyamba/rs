@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --text-color: #213547;
+}
+
+[data-theme='dark'] {
+  --bg-color: #213547;
+  --text-color: #ffffff;
+}
+
 :root {
   font-family: 'Fredoka', sans-serif;
   line-height: 1.5;
@@ -19,4 +29,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+}
+
+.app {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  max-height: max-content;
+  min-height: 100vh;
+
+  position: relative;
+  transition: background-color 0.3s ease;
 }

@@ -10,15 +10,21 @@ import {
   ErrorBoundary,
   ErrorButton,
   ErrorFallback,
+  Flyout,
   Header,
   Main,
+  NavBar,
 } from '../../components';
 import { getAllPokeData, getPokeData } from '../../api/pokeAPI';
 import type { PokeData } from '../../api/types';
 import { useStoredItem } from '../../utils';
+import { useSelector } from 'react-redux';
+import { selectPokemons } from '../../store';
 
 export const HomePage: FC = () => {
   const navigate = useNavigate();
+
+  const pokemons = useSelector(selectPokemons);
 
   const [searchQuery, setSearchQuery] = useStoredItem<string>(
     'searchQuery',
@@ -117,22 +123,13 @@ export const HomePage: FC = () => {
     navigate(`/?page=1`);
   }, [fetchAllData, fetchSearchData, navigate, searchQuery, setCurrentPage]);
 
-  const handleClickAboutButton = () => {
-    navigate('/about');
-  };
-
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
-      <div className="flex flex-col items-center justify-start gap-8 p-20 h-screen w-full">
-        <div className="flex w-full justify-end">
-          <button
-            className="hover:cursor-pointer hover:underline hover:underline-offset-4"
-            onClick={handleClickAboutButton}
-          >
-            About Author
-          </button>
-        </div>
-
+      <NavBar />
+      <div
+        className="flex flex-col items-center justify-start gap-8 p-20 h-full w-full"
+        data-testid="main-container"
+      >
         <Header
           value={searchQuery}
           onChangeValue={handleChangeInputValue}
@@ -152,6 +149,7 @@ export const HomePage: FC = () => {
           onChangeCurrentPage={handleChangeCurrentPage}
         />
       </div>
+      {pokemons.length ? <Flyout /> : null}
     </ErrorBoundary>
   );
 };
