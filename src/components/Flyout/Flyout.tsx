@@ -50,6 +50,7 @@ export const Flyout: FC = () => {
         <button
           className="p-2 border rounded cursor-pointer border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
           onClick={handleClickUnselectAll}
+          data-testid="unselect-all-button"
         >
           Unselect all
         </button>
@@ -57,6 +58,7 @@ export const Flyout: FC = () => {
         <a
           className="p-2 border rounded cursor-pointer border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
           download={'pokemons.csv'}
+          data-testid="download-button"
           href={URL.createObjectURL(file)}
         >
           Download
