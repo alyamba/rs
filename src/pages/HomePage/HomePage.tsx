@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FC,
-} from 'react';
+import { useCallback, type ChangeEvent, type FC } from 'react';
 import { useNavigate } from 'react-router';
 import {
   ErrorBoundary,
@@ -15,13 +9,13 @@ import {
   Main,
   NavBar,
 } from '../../components';
-import { getAllPokeData, getPokeData } from '../../api/pokeAPI';
-import type { PokeData } from '../../api/types';
 import { useStoredItem } from '../../utils';
 import { useSelector } from 'react-redux';
 import { selectPokemons } from '../../store';
 
 export const HomePage: FC = () => {
+  const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
+
   const navigate = useNavigate();
 
   const pokemons = useSelector(selectPokemons);
@@ -29,61 +23,6 @@ export const HomePage: FC = () => {
   const [searchQuery, setSearchQuery] = useStoredItem<string>(
     'searchQuery',
     ''
-  );
-  const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
-
-  const [queryResults, setQueryResults] = useState<PokeData[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-
-  const fetchAllData = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-
-    try {
-      const results = await getAllPokeData(currentPage);
-
-      setQueryResults(results.data);
-      setTotalPages(results.totalPages);
-      setSearchQuery(searchQuery);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-        setError(error.message);
-      } else {
-        console.error(String(error));
-        setError(`${error}`);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, searchQuery, setSearchQuery]);
-
-  const fetchSearchData = useCallback(
-    async (searchQuery: string) => {
-      setLoading(true);
-      setError(undefined);
-
-      try {
-        const results = await getPokeData(searchQuery);
-
-        setQueryResults(results.data);
-        setTotalPages(results.totalPages);
-        setSearchQuery(searchQuery);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          setError(error.message);
-        } else {
-          console.error(String(error));
-          setError(`${error}`);
-        }
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setSearchQuery]
   );
 
   const handleChangeCurrentPage = useCallback(
@@ -93,35 +32,16 @@ export const HomePage: FC = () => {
     [setCurrentPage]
   );
 
-  useEffect(() => {
-    if (searchQuery) {
-      fetchSearchData(searchQuery);
-    } else {
-      fetchAllData();
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAllData();
-    // Fetch the list of pokemons by changing the current page
-  }, [currentPage]);
-
   const handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const handleSearchClick = useCallback(() => {
-    const formattedSearchQuery = searchQuery.trim().toLowerCase();
-
-    if (formattedSearchQuery) {
-      fetchSearchData(formattedSearchQuery);
-    } else {
-      fetchAllData();
-    }
+    // const formattedSearchQuery = searchQuery.trim().toLowerCase();
 
     setCurrentPage(1);
     navigate(`/?page=1`);
-  }, [fetchAllData, fetchSearchData, navigate, searchQuery, setCurrentPage]);
+  }, [navigate, setCurrentPage]);
 
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
@@ -141,10 +61,6 @@ export const HomePage: FC = () => {
         </div>
 
         <Main
-          loading={loading}
-          queryResults={queryResults}
-          totalPages={totalPages}
-          error={error}
           currentPage={currentPage}
           onChangeCurrentPage={handleChangeCurrentPage}
         />
