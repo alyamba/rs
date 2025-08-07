@@ -1,6 +1,5 @@
 import { type FC } from 'react';
 import { Card } from '../';
-import type { PokeData } from '../../api/types';
 import type { CardListProps } from './types';
 
 export const CardList: FC<CardListProps> = ({ pokemons }) => {
@@ -9,8 +8,8 @@ export const CardList: FC<CardListProps> = ({ pokemons }) => {
       className="flex flex-wrap justify-center gap-12"
       data-testid="cards-container"
     >
-      {pokemons.map((pokemon: PokeData) => (
-        <Card key={pokemon.id} pokemonData={pokemon} />
+      {pokemons.map((pokemon, id) => (
+        <Card key={id} pokemonName={pokemon.name} />
       ))}
     </div>
   );

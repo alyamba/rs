@@ -4,21 +4,17 @@ import { Loading } from '../Loading';
 import type { MainProps } from './types';
 import { Pagination } from '../Pagination';
 import { Outlet } from 'react-router';
+import { useGetAllPokemonsQuery } from '../../store/api';
 
-export const Main: FC<MainProps> = ({
-  loading,
-  error,
-  queryResults,
-  totalPages,
-  currentPage,
-  onChangeCurrentPage,
-}) => {
-  if (loading) {
+export const Main: FC<MainProps> = ({ currentPage, onChangeCurrentPage }) => {
+  const { data, isLoading, error } = useGetAllPokemonsQuery(currentPage);
+
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500">Error: {error}</div>;
+  if (error || !data) {
+    return <div className="p-4 text-center text-red-500">Error</div>;
   }
 
   const handleChangePage = (page: number) => {
@@ -28,10 +24,10 @@ export const Main: FC<MainProps> = ({
   return (
     <div className="flex gap-8 justify-between w-full">
       <div className="pb-20 flex flex-col gap-12 w-full">
-        <CardList pokemons={queryResults} />
+        <CardList pokemons={data.data} />
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={data.totalPages}
           onChangePage={handleChangePage}
         />
       </div>
