@@ -19,3 +19,8 @@ export type allPokemonsApiResponse = {
   totalPages: number;
   data: PokemonResponse[];
 };
+
+export const TagTypes = {
+  pokemons: 'Pokemons',
+  pokemon: 'Pokemon',
+} as const;

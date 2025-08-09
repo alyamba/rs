@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type {
-  allPokemonsApiResponse,
-  formattedPokemonResponse,
+import {
+  TagTypes,
+  type allPokemonsApiResponse,
+  type formattedPokemonResponse,
 } from '../types';
 
 const REQUEST_LIMIT = 24;
@@ -10,6 +11,7 @@ const BASE_URL = 'https://pokeapi.co/api/v2/';
 export const pokemonsApi = createApi({
   reducerPath: 'pokemonsApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  tagTypes: [TagTypes.pokemons, TagTypes.pokemon],
   endpoints: (build) => ({
     getAllPokemons: build.query({
       query: (page) =>
@@ -19,6 +21,19 @@ export const pokemonsApi = createApi({
         const pokemons = response.results;
 
         return { totalPages, data: pokemons };
+      },
+      providesTags: (result) => {
+        const value = [{ type: TagTypes.pokemons, id: 'LIST' }];
+
+        return result
+          ? [
+              ...value,
+              ...result.data.map((pokemon) => ({
+                type: TagTypes.pokemons,
+                id: pokemon.name,
+              })),
+            ]
+          : value;
       },
     }),
 
@@ -37,6 +52,8 @@ export const pokemonsApi = createApi({
         },
         id: response.id,
       }),
+      providesTags: (result) =>
+        result ? [{ type: TagTypes.pokemon, id: result.name }] : [],
     }),
   }),
 });
