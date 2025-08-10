@@ -5,10 +5,10 @@ import appReducer from '../../store/appReducer';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { ThemeContext } from '../hooks/useTheme/useTheme';
-import type { PokeData } from '../../api/types';
+import { pokemonsApi, type FormattedPokemonResponse } from '../../store';
 
 type RenderWithStoreOptions = {
-  preloadedState?: { app: { pokemons: PokeData[] } };
+  preloadedState?: { app: { pokemons: FormattedPokemonResponse[] } };
   initialEntries?: string[];
 };
 

@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
   TagTypes,
-  type allPokemonsApiResponse,
-  type formattedPokemonResponse,
+  type AllPokemonsApiResponse,
+  type FormattedPokemonResponse,
 } from '../types';
 
 const REQUEST_LIMIT = 24;
@@ -17,7 +17,7 @@ export const pokemonsApi = createApi({
     getAllPokemons: build.query({
       query: (page: number) =>
         `pokemon?limit=${REQUEST_LIMIT}&offset=${(page - 1) * REQUEST_LIMIT}`,
-      transformResponse: (response): allPokemonsApiResponse => {
+      transformResponse: (response): AllPokemonsApiResponse => {
         const totalPages = Math.ceil(response.count / REQUEST_LIMIT);
         const pokemons = response.results;
 
@@ -40,7 +40,7 @@ export const pokemonsApi = createApi({
 
     getPokemonByName: build.query({
       query: (name: string) => `pokemon/${name}`,
-      transformResponse: (response): allPokemonsApiResponse => {
+      transformResponse: (response): AllPokemonsApiResponse => {
         const pokemons = [
           { name: response.name, url: `${BASE_URL}pokemon/${response.name}` },
         ];
@@ -64,7 +64,7 @@ export const pokemonsApi = createApi({
 
     getPokemonDetails: build.query({
       query: (pokemonId) => `pokemon/${pokemonId}`,
-      transformResponse: (response): formattedPokemonResponse => ({
+      transformResponse: (response): FormattedPokemonResponse => ({
         name: response.name,
         data: {
           height: response.height,
