@@ -82,14 +82,17 @@ export const CardDetails: FC = () => {
 
             <div className="flex gap-1 items-center">
               <div className="text-l font-normal">Default pokemon: </div>
-              <div className="text-l font-bold" data-testid="card-weight">
+              <div className="text-l font-bold" data-testid="card-is-default">
                 {data.data.isDefault ? 'Yes' : 'No'}
               </div>
             </div>
 
             <div className="flex gap-1 items-center">
               <div className="text-l font-normal">Pokemon types: </div>
-              <div className="text-l font-bold" data-testid="card-weight">
+              <div
+                className="text-l font-bold"
+                data-testid="card-pokemon-types"
+              >
                 {data.data.types.join(', ')}
               </div>
             </div>
