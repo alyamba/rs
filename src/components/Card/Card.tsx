@@ -4,10 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router';
 import type { CardProps } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { addPokemon, removePokemon, selectPokemons } from '../../store';
-import { useGetPokemonByIdQuery } from '../../store/api';
+import { useGetPokemonDetailsQuery } from '../../store/api';
 
 export const Card: FC<CardProps> = ({ pokemonName }) => {
-  const { data, isLoading, error } = useGetPokemonByIdQuery(pokemonName);
+  const { data, isLoading, error } = useGetPokemonDetailsQuery(pokemonName);
 
   const dispatch = useDispatch();
   const pokemons = useSelector(selectPokemons);
@@ -43,7 +43,9 @@ export const Card: FC<CardProps> = ({ pokemonName }) => {
       {isLoading ? (
         <Loading />
       ) : error || !data ? (
-        <div className="p-4 text-center text-red-500">Error</div>
+        <div className="p-4 text-center text-red-500">
+          Something went wrong.
+        </div>
       ) : (
         <>
           <div className="px-2 py-4">

@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { PokeData } from '../api/types';
+import type { formattedPokemonResponse } from './types';
 
 export interface AppState {
-  pokemons: PokeData[];
+  pokemons: formattedPokemonResponse[];
 }
 
 const initialState: AppState = {
@@ -14,15 +14,18 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    addPokemon: (state, action: PayloadAction<PokeData>) => ({
+    addPokemon: (state, action: PayloadAction<formattedPokemonResponse>) => ({
       ...state,
       pokemons: [...state.pokemons, action.payload],
     }),
 
-    removePokemon: (state, action: PayloadAction<PokeData>) => ({
+    removePokemon: (
+      state,
+      action: PayloadAction<formattedPokemonResponse>
+    ) => ({
       ...state,
       pokemons: state.pokemons.filter(
-        (pokemon) => pokemon.id !== action.payload.id
+        (pokemon: formattedPokemonResponse) => pokemon.id !== action.payload.id
       ),
     }),
 

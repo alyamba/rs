@@ -1,4 +1,4 @@
-import { useCallback, type ChangeEvent, type FC } from 'react';
+import { useCallback, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router';
 import {
   ErrorBoundary,
@@ -11,11 +11,14 @@ import {
 } from '../../components';
 import { useStoredItem } from '../../utils';
 import { useSelector } from 'react-redux';
-import { selectPokemons } from '../../store';
+import {
+  selectPokemons,
+  useLazyGetAllPokemonsQuery,
+  useLazyGetPokemonByNameQuery,
+} from '../../store';
 
 export const HomePage: FC = () => {
   const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
-
   const navigate = useNavigate();
 
   const pokemons = useSelector(selectPokemons);
@@ -25,6 +28,24 @@ export const HomePage: FC = () => {
     ''
   );
 
+  const [
+    allPokemonsTrigger,
+    {
+      data: searchedAllPokemonsData,
+      error: searchedAllPokemonsError,
+      isFetching: searchedAllPokemonsIsFetching,
+    },
+  ] = useLazyGetAllPokemonsQuery();
+
+  const [
+    pokemonByNameTrigger,
+    {
+      data: searchedPokemonData,
+      error: searchedPokemonError,
+      isFetching: searchedPokemonIsFetching,
+    },
+  ] = useLazyGetPokemonByNameQuery();
+
   const handleChangeCurrentPage = useCallback(
     (page: number) => {
       setCurrentPage(page);
@@ -32,16 +53,37 @@ export const HomePage: FC = () => {
     [setCurrentPage]
   );
 
-  const handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearchClick = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
 
-  const handleSearchClick = useCallback(() => {
-    // const formattedSearchQuery = searchQuery.trim().toLowerCase();
+      const formattedSearchQuery = value.trim().toLowerCase();
 
-    setCurrentPage(1);
-    navigate(`/?page=1`);
-  }, [navigate, setCurrentPage]);
+      if (formattedSearchQuery) {
+        pokemonByNameTrigger(formattedSearchQuery);
+      } else {
+        allPokemonsTrigger(1);
+      }
+
+      setCurrentPage(1);
+      navigate(`/?page=1`);
+    },
+    [
+      allPokemonsTrigger,
+      navigate,
+      pokemonByNameTrigger,
+      setCurrentPage,
+      setSearchQuery,
+    ]
+  );
+
+  useEffect(() => {
+    if (searchQuery.trim().toLowerCase()) {
+      pokemonByNameTrigger(searchQuery);
+    } else {
+      allPokemonsTrigger(currentPage);
+    }
+  }, [searchQuery, currentPage, pokemonByNameTrigger, allPokemonsTrigger]);
 
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
@@ -50,17 +92,20 @@ export const HomePage: FC = () => {
         className="flex flex-col items-center justify-start gap-8 p-20 h-full w-full"
         data-testid="main-container"
       >
-        <Header
-          value={searchQuery}
-          onChangeValue={handleChangeInputValue}
-          onSearch={handleSearchClick}
-        />
+        <Header value={searchQuery} onSearch={handleSearchClick} />
 
         <div className="flex justify-end w-full gap-4">
           <ErrorButton />
         </div>
 
         <Main
+          data={searchQuery ? searchedPokemonData : searchedAllPokemonsData}
+          loading={
+            searchQuery
+              ? searchedPokemonIsFetching
+              : searchedAllPokemonsIsFetching
+          }
+          error={searchQuery ? searchedPokemonError : searchedAllPokemonsError}
           currentPage={currentPage}
           onChangeCurrentPage={handleChangeCurrentPage}
         />

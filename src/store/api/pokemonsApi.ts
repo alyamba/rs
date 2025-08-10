@@ -12,9 +12,10 @@ export const pokemonsApi = createApi({
   reducerPath: 'pokemonsApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: [TagTypes.pokemons, TagTypes.pokemon],
+  keepUnusedDataFor: 300,
   endpoints: (build) => ({
     getAllPokemons: build.query({
-      query: (page) =>
+      query: (page: number) =>
         `pokemon?limit=${REQUEST_LIMIT}&offset=${(page - 1) * REQUEST_LIMIT}`,
       transformResponse: (response): allPokemonsApiResponse => {
         const totalPages = Math.ceil(response.count / REQUEST_LIMIT);
@@ -37,7 +38,31 @@ export const pokemonsApi = createApi({
       },
     }),
 
-    getPokemonById: build.query({
+    getPokemonByName: build.query({
+      query: (name: string) => `pokemon/${name}`,
+      transformResponse: (response): allPokemonsApiResponse => {
+        const pokemons = [
+          { name: response.name, url: `${BASE_URL}pokemon/${response.name}` },
+        ];
+
+        return { totalPages: 1, data: pokemons };
+      },
+      providesTags: (result) => {
+        const value = [{ type: TagTypes.pokemons, id: 'LIST' }];
+
+        return result
+          ? [
+              ...value,
+              {
+                type: TagTypes.pokemons,
+                id: result.data[0].name,
+              },
+            ]
+          : value;
+      },
+    }),
+
+    getPokemonDetails: build.query({
       query: (pokemonId) => `pokemon/${pokemonId}`,
       transformResponse: (response): formattedPokemonResponse => ({
         name: response.name,
@@ -58,4 +83,9 @@ export const pokemonsApi = createApi({
   }),
 });
 
-export const { useGetAllPokemonsQuery, useGetPokemonByIdQuery } = pokemonsApi;
+export const {
+  useLazyGetAllPokemonsQuery,
+  useLazyGetPokemonByNameQuery,
+
+  useGetPokemonDetailsQuery,
+} = pokemonsApi;

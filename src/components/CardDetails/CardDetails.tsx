@@ -2,7 +2,7 @@ import { useState, type FC } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { Loading } from '../Loading';
 import styles from './CardDetailes.module.css';
-import { useGetPokemonByIdQuery } from '../../store';
+import { useGetPokemonDetailsQuery } from '../../store';
 
 export const CardDetails: FC = () => {
   const navigate = useNavigate();
@@ -10,7 +10,9 @@ export const CardDetails: FC = () => {
   const params = useParams();
 
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
-  const { data, isLoading, error } = useGetPokemonByIdQuery(String(params.id));
+  const { data, isLoading, error } = useGetPokemonDetailsQuery(
+    String(params.id)
+  );
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -36,7 +38,9 @@ export const CardDetails: FC = () => {
       {isLoading ? (
         <Loading />
       ) : error || !data ? (
-        <div className="text-center">Error</div>
+        <div className="p-4 text-center text-red-500">
+          Something went wrong.
+        </div>
       ) : (
         <div className="p-4">
           <div className="relative h-[280px]">
