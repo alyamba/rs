@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FC,
-} from 'react';
+import { useCallback, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router';
 import {
   ErrorBoundary,
@@ -15,14 +9,20 @@ import {
   Main,
   NavBar,
 } from '../../components';
-import { getAllPokeData, getPokeData } from '../../api/pokeAPI';
-import type { PokeData } from '../../api/types';
 import { useStoredItem } from '../../utils';
-import { useSelector } from 'react-redux';
-import { selectPokemons } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  pokemonsApi,
+  selectPokemons,
+  TagTypes,
+  useLazyGetAllPokemonsQuery,
+  useLazyGetPokemonByNameQuery,
+} from '../../store';
 
 export const HomePage: FC = () => {
+  const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const pokemons = useSelector(selectPokemons);
 
@@ -30,61 +30,24 @@ export const HomePage: FC = () => {
     'searchQuery',
     ''
   );
-  const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
 
-  const [queryResults, setQueryResults] = useState<PokeData[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-
-  const fetchAllData = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-
-    try {
-      const results = await getAllPokeData(currentPage);
-
-      setQueryResults(results.data);
-      setTotalPages(results.totalPages);
-      setSearchQuery(searchQuery);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-        setError(error.message);
-      } else {
-        console.error(String(error));
-        setError(`${error}`);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, searchQuery, setSearchQuery]);
-
-  const fetchSearchData = useCallback(
-    async (searchQuery: string) => {
-      setLoading(true);
-      setError(undefined);
-
-      try {
-        const results = await getPokeData(searchQuery);
-
-        setQueryResults(results.data);
-        setTotalPages(results.totalPages);
-        setSearchQuery(searchQuery);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          setError(error.message);
-        } else {
-          console.error(String(error));
-          setError(`${error}`);
-        }
-      } finally {
-        setLoading(false);
-      }
+  const [
+    allPokemonsTrigger,
+    {
+      data: searchedAllPokemonsData,
+      error: searchedAllPokemonsError,
+      isFetching: searchedAllPokemonsIsFetching,
     },
-    [setSearchQuery]
-  );
+  ] = useLazyGetAllPokemonsQuery();
+
+  const [
+    pokemonByNameTrigger,
+    {
+      data: searchedPokemonData,
+      error: searchedPokemonError,
+      isFetching: searchedPokemonIsFetching,
+    },
+  ] = useLazyGetPokemonByNameQuery();
 
   const handleChangeCurrentPage = useCallback(
     (page: number) => {
@@ -93,35 +56,56 @@ export const HomePage: FC = () => {
     [setCurrentPage]
   );
 
+  const handleSearchClick = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+
+      if (value) {
+        pokemonByNameTrigger(value);
+      } else {
+        allPokemonsTrigger(1);
+      }
+
+      setCurrentPage(1);
+      navigate(`/?page=1`);
+    },
+    [
+      allPokemonsTrigger,
+      navigate,
+      pokemonByNameTrigger,
+      setCurrentPage,
+      setSearchQuery,
+    ]
+  );
+
   useEffect(() => {
+    navigate(`/?page=${currentPage}`);
     if (searchQuery) {
-      fetchSearchData(searchQuery);
+      pokemonByNameTrigger(searchQuery);
     } else {
-      fetchAllData();
+      allPokemonsTrigger(currentPage);
     }
-  }, []);
+  }, [
+    searchQuery,
+    currentPage,
+    pokemonByNameTrigger,
+    allPokemonsTrigger,
+    navigate,
+  ]);
 
-  useEffect(() => {
-    fetchAllData();
-    // Fetch the list of pokemons by changing the current page
-  }, [currentPage]);
-
-  const handleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const handleRefetch = () => {
+    if (searchQuery) {
+      pokemonByNameTrigger(searchQuery);
+    } else {
+      allPokemonsTrigger(currentPage);
+    }
   };
 
-  const handleSearchClick = useCallback(() => {
-    const formattedSearchQuery = searchQuery.trim().toLowerCase();
-
-    if (formattedSearchQuery) {
-      fetchSearchData(formattedSearchQuery);
-    } else {
-      fetchAllData();
-    }
-
-    setCurrentPage(1);
-    navigate(`/?page=1`);
-  }, [fetchAllData, fetchSearchData, navigate, searchQuery, setCurrentPage]);
+  const handleInvalidateCache = () => {
+    dispatch(
+      pokemonsApi.util.invalidateTags([{ type: TagTypes.pokemons, id: 'LIST' }])
+    );
+  };
 
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
@@ -130,21 +114,35 @@ export const HomePage: FC = () => {
         className="flex flex-col items-center justify-start gap-8 p-20 h-full w-full"
         data-testid="main-container"
       >
-        <Header
-          value={searchQuery}
-          onChangeValue={handleChangeInputValue}
-          onSearch={handleSearchClick}
-        />
+        <Header value={searchQuery} onSearch={handleSearchClick} />
 
-        <div className="flex justify-end w-full gap-4">
+        <div className="flex justify-between w-full gap-4">
+          <div className="flex gap-4">
+            <button
+              className="py-2 px-2 border border-gray-100 bg-gray-50 hover:bg-gray-100 hover:cursor-pointer"
+              onClick={handleRefetch}
+            >
+              Refetch data
+            </button>
+            <button
+              className="py-2 px-2 border border-gray-100 bg-gray-50 hover:bg-gray-100 hover:cursor-pointer"
+              onClick={handleInvalidateCache}
+            >
+              Invalidate cache
+            </button>
+          </div>
+
           <ErrorButton />
         </div>
 
         <Main
-          loading={loading}
-          queryResults={queryResults}
-          totalPages={totalPages}
-          error={error}
+          data={searchQuery ? searchedPokemonData : searchedAllPokemonsData}
+          loading={
+            searchQuery
+              ? searchedPokemonIsFetching
+              : searchedAllPokemonsIsFetching
+          }
+          error={searchQuery ? searchedPokemonError : searchedAllPokemonsError}
           currentPage={currentPage}
           onChangeCurrentPage={handleChangeCurrentPage}
         />

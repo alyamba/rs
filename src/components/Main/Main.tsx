@@ -6,10 +6,9 @@ import { Pagination } from '../Pagination';
 import { Outlet } from 'react-router';
 
 export const Main: FC<MainProps> = ({
+  data,
   loading,
   error,
-  queryResults,
-  totalPages,
   currentPage,
   onChangeCurrentPage,
 }) => {
@@ -17,8 +16,10 @@ export const Main: FC<MainProps> = ({
     return <Loading />;
   }
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500">Error: {error}</div>;
+  if (error || !data) {
+    return (
+      <div className="p-4 text-center text-red-500">Something went wrong.</div>
+    );
   }
 
   const handleChangePage = (page: number) => {
@@ -28,10 +29,10 @@ export const Main: FC<MainProps> = ({
   return (
     <div className="flex gap-8 justify-between w-full">
       <div className="pb-20 flex flex-col gap-12 w-full">
-        <CardList pokemons={queryResults} />
+        <CardList pokemons={data.data} />
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={data.totalPages}
           onChangePage={handleChangePage}
         />
       </div>

@@ -1,21 +1,30 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { mockPokemonData, renderWithStore } from '../../utils';
-import * as api from '../../api/pokeAPI';
 import { Route, Routes } from 'react-router';
 import { CardDetails } from '../CardDetails';
+import { useGetPokemonDetailsQuery } from '../../store/api/pokemonsApi';
 
-vi.mock('../../api/pokeAPI');
+vi.mock('react-router-dom');
+vi.mock('../../store/api/pokemonsApi', async () => {
+  const originalModule = await vi.importActual('../../store/api/pokemonsApi');
+  return {
+    ...originalModule,
+    useGetPokemonDetailsQuery: vi.fn(),
+  };
+});
 
 describe('CardDetails', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.mocked(useGetPokemonDetailsQuery).mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      error: undefined,
+      refetch: vi.fn(),
+    });
   });
 
   it('Renders loading', () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockImplementation(
-      () => new Promise(() => {})
-    );
     const component = renderWithStore(
       <Routes>
         <Route path="/pokemon/:id" element={<CardDetails />} />
@@ -28,10 +37,6 @@ describe('CardDetails', () => {
   });
 
   it('Renders pokemon image correctly', async () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: [mockPokemonData],
-    });
-
     const component = renderWithStore(
       <Routes>
         <Route path="/pokemon/:id" element={<CardDetails />} />
@@ -46,10 +51,6 @@ describe('CardDetails', () => {
   });
 
   it('Renders pokemon data correctly', async () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: [mockPokemonData],
-    });
-
     const component = renderWithStore(
       <Routes>
         <Route path="/pokemon/:id" element={<CardDetails />} />
@@ -64,9 +65,12 @@ describe('CardDetails', () => {
   });
 
   it('Renders pokemon data is failed', async () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error('Error')
-    );
+    vi.mocked(useGetPokemonDetailsQuery).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { message: 'Something went wrong.' },
+      refetch: vi.fn(),
+    });
 
     const component = renderWithStore(
       <Routes>
@@ -76,16 +80,12 @@ describe('CardDetails', () => {
     );
 
     await waitFor(() => {
-      const error = component.getByText('Error');
+      const error = component.getByText('Something went wrong.');
       expect(error).toBeInTheDocument();
     });
   });
 
   it('Closes details', async () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: [mockPokemonData],
-    });
-
     const component = renderWithStore(
       <Routes>
         <Route path="/pokemon/:id" element={<CardDetails />} />
@@ -107,10 +107,6 @@ describe('CardDetails', () => {
   });
 
   it('Sets imageLoaded to true after image load', async () => {
-    (api.getPokeData as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: [mockPokemonData],
-    });
-
     const component = renderWithStore(
       <Routes>
         <Route path="/pokemon/:id" element={<CardDetails />} />

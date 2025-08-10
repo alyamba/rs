@@ -1,4 +1,4 @@
-export type PokeData = {
+export type FormattedPokemonResponse = {
   name: string;
   data: {
     height: number;
@@ -15,7 +15,12 @@ export type PokemonResponse = {
   url: string;
 };
 
-export type PokeApiResponse = {
+export type AllPokemonsApiResponse = {
   totalPages: number;
-  data: PokeData[];
+  data: PokemonResponse[];
 };
+
+export const TagTypes = {
+  pokemons: 'Pokemons',
+  pokemon: 'Pokemon',
+} as const;
