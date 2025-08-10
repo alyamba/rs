@@ -14,4 +14,8 @@ export const router = [
     ],
   },
   { path: '/about', element: <AboutPage /> },
+  {
+    path: '*',
+    element: <ErrorPage />,
+  },
 ];
