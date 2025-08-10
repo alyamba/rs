@@ -21,7 +21,10 @@ export const renderWithStore = (
   const store = configureStore({
     reducer: {
       app: appReducer,
+      [pokemonsApi.reducerPath]: pokemonsApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonsApi.middleware),
     preloadedState: preloadedState ?? { app: { pokemons: [] } },
   });
 
