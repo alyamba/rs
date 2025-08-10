@@ -10,9 +10,11 @@ import {
   NavBar,
 } from '../../components';
 import { useStoredItem } from '../../utils';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
+  pokemonsApi,
   selectPokemons,
+  TagTypes,
   useLazyGetAllPokemonsQuery,
   useLazyGetPokemonByNameQuery,
 } from '../../store';
@@ -20,6 +22,7 @@ import {
 export const HomePage: FC = () => {
   const [currentPage, setCurrentPage] = useStoredItem<number>('page', 1);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const pokemons = useSelector(selectPokemons);
 
@@ -57,10 +60,8 @@ export const HomePage: FC = () => {
     (value: string) => {
       setSearchQuery(value);
 
-      const formattedSearchQuery = value.trim().toLowerCase();
-
-      if (formattedSearchQuery) {
-        pokemonByNameTrigger(formattedSearchQuery);
+      if (value) {
+        pokemonByNameTrigger(value);
       } else {
         allPokemonsTrigger(1);
       }
@@ -78,12 +79,26 @@ export const HomePage: FC = () => {
   );
 
   useEffect(() => {
-    if (searchQuery.trim().toLowerCase()) {
+    if (searchQuery) {
       pokemonByNameTrigger(searchQuery);
     } else {
       allPokemonsTrigger(currentPage);
     }
   }, [searchQuery, currentPage, pokemonByNameTrigger, allPokemonsTrigger]);
+
+  const handleRefetch = () => {
+    if (searchQuery) {
+      pokemonByNameTrigger(searchQuery);
+    } else {
+      allPokemonsTrigger(currentPage);
+    }
+  };
+
+  const handleInvalidateCache = () => {
+    dispatch(
+      pokemonsApi.util.invalidateTags([{ type: TagTypes.pokemons, id: 'LIST' }])
+    );
+  };
 
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
@@ -94,7 +109,22 @@ export const HomePage: FC = () => {
       >
         <Header value={searchQuery} onSearch={handleSearchClick} />
 
-        <div className="flex justify-end w-full gap-4">
+        <div className="flex justify-between w-full gap-4">
+          <div className="flex gap-4">
+            <button
+              className="py-2 px-2 border border-gray-100 bg-gray-50 hover:bg-gray-100 hover:cursor-pointer"
+              onClick={handleRefetch}
+            >
+              Refetch data
+            </button>
+            <button
+              className="py-2 px-2 border border-gray-100 bg-gray-50 hover:bg-gray-100 hover:cursor-pointer"
+              onClick={handleInvalidateCache}
+            >
+              Invalidate cache
+            </button>
+          </div>
+
           <ErrorButton />
         </div>
 

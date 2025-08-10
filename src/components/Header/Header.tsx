@@ -9,7 +9,7 @@ export const Header: FC<HeaderProps> = ({ value, onSearch }) => {
   };
 
   const handleSearch = () => {
-    onSearch(inputValue);
+    onSearch(inputValue.trim().toLowerCase());
   };
 
   return (
