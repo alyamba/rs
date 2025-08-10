@@ -79,12 +79,19 @@ export const HomePage: FC = () => {
   );
 
   useEffect(() => {
+    navigate(`/?page=${currentPage}`);
     if (searchQuery) {
       pokemonByNameTrigger(searchQuery);
     } else {
       allPokemonsTrigger(currentPage);
     }
-  }, [searchQuery, currentPage, pokemonByNameTrigger, allPokemonsTrigger]);
+  }, [
+    searchQuery,
+    currentPage,
+    pokemonByNameTrigger,
+    allPokemonsTrigger,
+    navigate,
+  ]);
 
   const handleRefetch = () => {
     if (searchQuery) {
