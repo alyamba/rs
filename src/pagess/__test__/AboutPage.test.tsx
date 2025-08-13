@@ -1,7 +1,7 @@
 import { fireEvent } from '@testing-library/react';
 import { Route, Routes } from 'react-router';
 import { describe, it } from 'vitest';
-import { AboutPage, HomePage } from '../';
+import { AboutPage, HomePage } from '..';
 import { renderWithStore } from '../../utils';
 
 describe('AboutPage', () => {
