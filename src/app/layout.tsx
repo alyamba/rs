@@ -3,6 +3,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Fredoka, Roboto } from 'next/font/google';
 import Providers from './providers';
+import { getLocale } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -21,13 +23,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <Head>
         <link
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
@@ -37,9 +41,14 @@ export default function RootLayout({
 
       <body>
         <Providers>
-          <div id="root" className={`${fredoka.className} ${roboto.className}`}>
-            {children}
-          </div>
+          <NextIntlClientProvider>
+            <div
+              id="root"
+              className={`${fredoka.className} ${roboto.className}`}
+            >
+              {children}
+            </div>
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

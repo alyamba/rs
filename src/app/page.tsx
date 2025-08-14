@@ -1,5 +1,7 @@
-'use strict';
+import { useTranslations } from 'next-intl';
 
-export default function Page() {
-  return <main>Home page content</main>;
+export default function HomePage() {
+  const t = useTranslations('HomePage');
+
+  return <h1>{t('title')}</h1>;
 }
