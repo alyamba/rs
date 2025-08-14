@@ -2,9 +2,10 @@ import Head from 'next/head';
 import './globals.css';
 import type { Metadata } from 'next';
 import { Fredoka, Roboto } from 'next/font/google';
+import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import Providers from './providers';
-import { getLocale } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -25,10 +26,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = await getLocale();
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
 
   return (
     <html lang={locale}>
