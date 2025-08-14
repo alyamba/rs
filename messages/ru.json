@@ -1,5 +1,15 @@
 {
   "HomePage": {
     "title": "Привет мир!"
+  },
+
+  "AboutPage": {
+    "linkToHome": "Главная",
+    "authorNameText": "Я <name>{name}</name> и я frontend-разработчик.",
+    "authorName": "Алина",
+    "rsCourse": "Этот сайт является моим учебным проектом на <course>RSschool React</course> курсе.",
+    "otherProjects": "Если вы хотите увидеть другие мои проекты, мы можете заглянуть <github>{github}</github>.",
+    "githubText": "на мой GitHub",
+    "title": "О НАС"
   }
 }

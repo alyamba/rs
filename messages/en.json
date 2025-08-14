@@ -1,5 +1,15 @@
 {
   "HomePage": {
     "title": "Hello world!"
+  },
+
+  "AboutPage": {
+    "linkToHome": "Home",
+    "authorNameText": "My name is <name>{name}</name> and I&apos;m frontend developer.",
+    "authorName": "Alina",
+    "rsCourse": "This website is my education task for <course>RSschool React</course> course.",
+    "otherProjects": "If you want to see my other projects, you can visit <github>{github}</github>.",
+    "githubText": "my GitHub",
+    "title": "ABOUT US"
   }
 }
