@@ -33,7 +33,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
           rel="stylesheet"
         />
-        <title>Pokémon</title>
       </Head>
 
       <body>
