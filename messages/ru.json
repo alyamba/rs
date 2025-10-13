@@ -11,5 +11,10 @@
     "otherProjects": "Если вы хотите увидеть другие мои проекты, мы можете заглянуть <github>{github}</github>.",
     "githubText": "на мой GitHub",
     "title": "О НАС"
+  },
+
+  "NotFoundPage": {
+    "linkToHome": "Вернуться на главную страницу",
+    "errorText": "Страница не найдена"
   }
 }

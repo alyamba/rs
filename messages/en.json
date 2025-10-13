@@ -11,5 +11,10 @@
     "otherProjects": "If you want to see my other projects, you can visit <github>{github}</github>.",
     "githubText": "my GitHub",
     "title": "ABOUT US"
+  },
+
+  "NotFoundPage": {
+    "linkToHome": "Return to home page",
+    "errorText": "Page Not Found"
   }
 }
