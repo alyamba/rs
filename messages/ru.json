@@ -1,6 +1,7 @@
 {
   "HomePage": {
-    "title": "Привет мир!"
+    "title": "Привет мир!",
+    "about": "Об авторе"
   },
 
   "AboutPage": {
@@ -14,7 +15,7 @@
   },
 
   "NotFoundPage": {
-    "linkToHome": "Вернуться на главную страницу",
+    "linkToHome": "Главная",
     "errorText": "Страница не найдена"
   }
 }
