@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/utils';
 import React from 'react';
 import { Provider } from 'react-redux';
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <React.StrictMode>
       <Provider store={store}>
@@ -13,4 +13,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       </Provider>
     </React.StrictMode>
   );
-}
+};
+
+export default Providers;

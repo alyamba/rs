@@ -15,11 +15,13 @@ const AboutPage = () => {
         >
           {t('linkToHome')}
         </Link>
+
         <div>
           {t.rich('authorNameText', {
             name: () => <strong>{t('authorName')}</strong>,
           })}
         </div>
+
         <div>
           {t.rich('rsCourse', {
             course: (chunks) => (
@@ -34,6 +36,7 @@ const AboutPage = () => {
             ),
           })}
         </div>
+
         <div>
           {t.rich('otherProjects', {
             github: () => (
@@ -49,6 +52,7 @@ const AboutPage = () => {
           })}
         </div>
       </div>
+
       <div className="flex-2 h-full flex items-center justify-center bg-sky-100">
         <div className="rotate-90 text-7xl">{t('title')}</div>
       </div>
