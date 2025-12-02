@@ -1,5 +1,5 @@
 import { CardDetails } from '../components';
-import { AboutPage, ErrorPage, HomePage } from '../pages';
+import { AboutPage, ErrorPage, HomePage } from '../pagess';
 
 export const router = [
   {
